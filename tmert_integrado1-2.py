@@ -147,4 +147,3 @@ if uploaded_file is not None:
             file_name="tareas_tmert.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        
