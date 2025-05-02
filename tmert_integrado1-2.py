@@ -41,6 +41,12 @@ def cargar_configuracion():
 
 config = cargar_configuracion()
 
+# Función para eliminar columnas vacías
+def eliminar_columnas_vacias(df):
+    # Eliminar columnas que no tienen ningún valor no vacío
+    df = df.loc[:, (df != "").any(axis=0)]
+    return df
+
 def extraer_texto_desde_excel(file, hoja):
     df = pd.read_excel(file, sheet_name=hoja, header=None, dtype=str).fillna("")
     texto = df.astype(str).apply(lambda row: " ".join(row), axis=1).str.cat(sep="\n")
@@ -102,6 +108,9 @@ if uploaded_file is not None:
             datos_dict = json.loads(json_resultado)
             df_general = pd.DataFrame([datos_dict])
 
+            # Eliminar columnas vacías
+            df_general = eliminar_columnas_vacias(df_general)
+
             output = BytesIO()
             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                 df_general.to_excel(writer, sheet_name='Datos Generales', index=False)
@@ -135,6 +144,9 @@ if uploaded_file is not None:
         for r in riesgos:
             if r not in tareas.columns:
                 tareas[r] = ""
+
+        # Eliminar columnas vacías
+        tareas = eliminar_columnas_vacias(tareas)
 
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
